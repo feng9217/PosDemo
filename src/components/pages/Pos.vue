@@ -1,6 +1,5 @@
 <template>
   <div class="pos">
-    text text text
   </div>
 </template>
 
