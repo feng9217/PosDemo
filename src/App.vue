@@ -1,10 +1,7 @@
 <template>
   <div id="app">
     <leftNavi></leftNavi>
-<!--     <img src="./assets/logo.png">
-    <span>icon text:</span>
-    <i class="icon iconfont icon-hanbao"></i>
-    <i class="icon iconfont icon-kafei"></i> -->
+<!--     <img src="./assets/logo.png"> -->
     <div class="main">
       <keep-alive>
         <router-view/>
@@ -28,9 +25,10 @@ export default {
   #app{
     height: 100%;
     text-align: center;
+    display: flex;
   }
   .main{
-    float: left;
+    flex: 1;
     width: 95%;
     background-color: #EFF2F7;
     height: 100%;

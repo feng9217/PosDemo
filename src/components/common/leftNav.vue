@@ -39,8 +39,8 @@
     font-size: 10px;
     height: 100%;
     background-color: #1D8CE0;
-    float: left;
-    width: 5%;
+    flex: none;
+    width: 50px;
   }
   .iconfont{
     font-size: 24px;
