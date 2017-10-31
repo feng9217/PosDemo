@@ -9,3 +9,7 @@
 使用 Element UI —— 一套基于 Vue 2.0 的桌面端组件库
 API: http://element-cn.eleme.io/#/zh-CN
 element和bootstrap一样 也有栅格系统
+  
+在使用tabs的时候, 发现第一个tab会被吃掉一个padding-left 迷??
+.el-tabs__nav-scroll 只能给这个盒子上个补丁
+

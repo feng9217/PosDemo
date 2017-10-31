@@ -34,7 +34,7 @@
       </el-col>
       <el-col :span="17">
         <div class="popular-goods">
-          <div class="title">常用商品</div>
+          <div class="title">热门商品</div>
           <div class="popular-goods-list">
             <ul>
               <li v-for="item in popularGoods">
@@ -60,13 +60,43 @@
               </div>
             </el-tab-pane>
             <el-tab-pane label="小食">
-              小食
+              <div>
+                <ul class="cook-list">
+                  <li v-for="item in type1Goods">
+                    <span class="foodImg">
+                      <img :src="item.goodsImg" width="100%">
+                    </span>
+                    <span class="foodName">{{item.goodsName}}</span>
+                    <span class="foodPrice">{{item.price}}</span>
+                  </li>
+                </ul>
+              </div>
             </el-tab-pane>
             <el-tab-pane label="饮品">
-              饮品
+              <div>
+                <ul class="cook-list">
+                  <li v-for="item in type2Goods">
+                    <span class="foodImg">
+                      <img :src="item.goodsImg" width="100%">
+                    </span>
+                    <span class="foodName">{{item.goodsName}}</span>
+                    <span class="foodPrice">{{item.price}}</span>
+                  </li>
+                </ul>
+              </div>
             </el-tab-pane>
             <el-tab-pane label="套餐">
-              套餐
+              <div>
+                <ul class="cook-list">
+                  <li v-for="item in type3Goods">
+                    <span class="foodImg">
+                      <img :src="item.goodsImg" width="100%">
+                    </span>
+                    <span class="foodName">{{item.goodsName}}</span>
+                    <span class="foodPrice">{{item.price}}</span>
+                  </li>
+                </ul>
+              </div>
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -76,6 +106,10 @@
 </template>
 
 <script type="text/javascript">
+  import {getPopularData, getTypeGoods} from '../../api/pos'
+
+  const ERR_OK = 200
+
   export default {
     name: 'Pos',
     data() {
@@ -97,103 +131,16 @@
           price: 8,
           count: 1
         }],
-        popularGoods: [
-          {
-            goodsId: 1,
-            goodsName: '香辣鸡腿堡',
-            price: 18
-          }, {
-            goodsId: 2,
-            goodsName: '田园鸡腿堡',
-            price: 15
-          }, {
-            goodsId: 3,
-            goodsName: '和风汉堡',
-            price: 15
-          }, {
-            goodsId: 4,
-            goodsName: '快乐全家桶',
-            price: 80
-          }, {
-            goodsId: 5,
-            goodsName: '脆皮炸鸡腿',
-            price: 10
-          }, {
-            goodsId: 6,
-            goodsName: '魔法鸡块',
-            price: 20
-          }, {
-            goodsId: 7,
-            goodsName: '可乐大杯',
-            price: 10
-          }, {
-            goodsId: 8,
-            goodsName: '雪顶咖啡',
-            price: 18
-          }, {
-            goodsId: 9,
-            goodsName: '大块鸡米花',
-            price: 15
-          }, {
-            goodsId: 20,
-            goodsName: '香脆鸡柳',
-            price: 17
-          }
-        ],
-        type0Goods: [
-          {
-            goodsId: 1,
-            goodsImg: 'http://7xjyw1.com1.z0.glb.clouddn.com/pos001.jpg',
-            goodsName: '香辣鸡腿堡',
-            price: 18
-          }, {
-            goodsId: 2,
-            goodsImg: 'http://7xjyw1.com1.z0.glb.clouddn.com/pos002.jpg',
-            goodsName: '田园鸡腿堡',
-            price: 15
-          }, {
-            goodsId: 3,
-            goodsImg: 'http://7xjyw1.com1.z0.glb.clouddn.com/pos004.jpg',
-            goodsName: '和风汉堡',
-            price: 15
-          }, {
-            goodsId: 4,
-            goodsImg: 'http://7xjyw1.com1.z0.glb.clouddn.com/pos003.jpg',
-            goodsName: '快乐全家桶',
-            price: 80
-          }, {
-            goodsId: 5,
-            goodsImg: 'http://7xjyw1.com1.z0.glb.clouddn.com/pos003.jpg',
-            goodsName: '脆皮炸鸡腿',
-            price: 10
-          }, {
-            goodsId: 6,
-            goodsImg: 'http://7xjyw1.com1.z0.glb.clouddn.com/pos004.jpg',
-            goodsName: '魔法鸡块',
-            price: 20
-          }, {
-            goodsId: 7,
-            goodsImg: 'http://7xjyw1.com1.z0.glb.clouddn.com/pos001.jpg',
-            goodsName: '可乐大杯',
-            price: 10
-          }, {
-            goods: 8,
-            goodsImg: 'http://7xjyw1.com1.z0.glb.clouddn.com/pos003.jpg',
-            goodsName: '雪顶咖啡',
-            price: 18
-          }, {
-            goodsId: 9,
-            goodsImg: 'http://7xjyw1.com1.z0.glb.clouddn.com/pos002.jpg',
-            goodsName: '大块鸡米花',
-            price: 15
-          }, {
-            goodsId: 20,
-            goodsImg: 'http://7xjyw1.com1.z0.glb.clouddn.com/pos002.jpg',
-            goodsName: '香脆鸡柳',
-            price: 17
-          }
-        ]
+        popularGoods: [],
+        type0Goods: [],
+        type1Goods: [],
+        type2Goods: [],
+        type3Goods: []
       }
+    },
+    created() {
+      this._getPopularData()
+      this._getTypeGoods()
     },
     mounted() {
       this._getHeight()
@@ -206,6 +153,34 @@
         // 输出的不是 refs引用:[object HTMLDivElement]
         // this.$root.$refs.orderList.style.height = orderHeight + 'px'
         document.getElementById('order-list').style.height = orderHeight + 'px'
+      },
+      _getPopularData() {
+        getPopularData().then((res) => {
+          if (res.status === ERR_OK) {
+            this.popularGoods = res.data
+            // console.log(this.popularGoods)
+          } else {
+            return console.log('获取数据错误')
+          }
+        })
+      },
+      _getTypeGoods() {
+        getTypeGoods().then((res) => {
+          if (res.status === ERR_OK) {
+            // this.type0Goods = res.data[0]
+            // this.type1Goods = res.data[1]
+            // this.type2Goods = res.data[2]
+            // this.type3Goods = res.data[3]
+            [this.type0Goods, this.type1Goods, this.type2Goods, this.type3Goods] = res.data
+            console.log(this.type3Goods[0].goodsName)
+            // for (let i = 0; i <= this.type3Goods.length; i++) {
+            //   if (this.type3Goods[i].goodsName.length > 5) {}
+            // }
+            this.type3Goods[0].goodsName = this.type3Goods[0].goodsName.substring(0, 5) + '..'
+          } else {
+            return console.log('获取数据错误')
+          }
+        })
       }
     }
   }
@@ -246,6 +221,8 @@
     padding: 10px;
     margin: 10px;
     background-color: #fff;
+    display: block;
+    cursor: pointer;
   }
   .per-price{
     color: #58B7FF
@@ -253,6 +230,7 @@
   .goods-type{
     clear: both;
   }
+  /*同款padding-left*/
   .goods-type .el-tabs__nav-scroll{
     padding-left: 20px;
   }
@@ -269,6 +247,8 @@
     padding: 2px;
     float:left;
     margin: 2px;
+    display: block;
+    cursor: pointer;
   }
   .cook-list li span{
     display: block;
