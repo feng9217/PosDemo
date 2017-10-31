@@ -23,8 +23,12 @@ export default {
 
 <style>
   #app{
+    font-family: 'Microsoft YaHei','Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     height: 100%;
-    text-align: center;
+    text-align: left;
+    color: #2C3E50;
     display: flex;
   }
   .main{
@@ -32,6 +36,6 @@ export default {
     width: 95%;
     background-color: #EFF2F7;
     height: 100%;
-    overflow: hidden;
+    overflow: auto;
   }
 </style>
