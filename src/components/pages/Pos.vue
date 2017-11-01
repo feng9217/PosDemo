@@ -13,7 +13,7 @@
               <el-table-column label="操作" width="100" fixed="right">
                 <!-- 2.5版本以后 scope已经改成slot-scope -->
                 <template slot-scope="scope">
-                  <el-button type="text" size="small">删除</el-button>
+                  <el-button type="text" size="small" @click="deleteGoodsItem(scope.row)">删除</el-button>
                   <!-- 小坑 因为有scope 模板作用域 传入参数注意 -->
                   <!-- scope.row 传入当前行 -->
                   <el-button type="text" size="small" @click="addOrderList(scope.row)">增加</el-button>
@@ -26,8 +26,8 @@
             </div>
             <div class="btn-zone">
               <el-button type="warning">挂单</el-button>
-              <el-button type="danger">删除</el-button>
-              <el-button type="success">结账</el-button>
+              <el-button type="danger" @click="deleteAllGoods">删除</el-button>
+              <el-button type="success" @click="checkOut">结账</el-button>
             </div>
           </el-tab-pane>
           <el-tab-pane label="挂单">
@@ -212,7 +212,8 @@
         // 根据标志位执行逻辑 存在 则数量++ 不存在 则添加
         if (isHave) {
           // 如果在 tableData 中已经存在该元素 则数量++
-          let arr = this.tableData.filter((el) => el.goodsId === item.goodsId)
+          let arr = this.tableData.filter((el) => el.goodsId === item.goodsId
+          )
           arr[0].count++
         } else {
           let newGoods = {
@@ -224,10 +225,47 @@
           this.tableData.push(newGoods)
         }
         // 汇总计算
-        this.tableData.forEach((el) => {
-          this.totalCount += el.count
-          this.totalMoney = this.totalMoney + (el.price * el.count)
-        })
+        this.getTotal()
+      },
+      deleteGoodsItem(item) {
+        this.tableData = this.tableData.filter((el) => el.goodsId !== item.goodsId
+        )
+        this.getTotal()
+      },
+      // 提取汇总方法
+      getTotal() {
+        this.totalCount = 0
+        this.totalMoney = 0
+        if (this.tableData) {
+          this.tableData.forEach((el) => {
+            this.totalCount += el.count
+            this.totalMoney = this.totalMoney + (el.price * el.count)
+          })
+        }
+      },
+      deleteAllGoods() {
+        this.tableData = []
+        this.totalCount = 0
+        this.totalMoney = 0
+      },
+      // 单纯的提交订单 没有后台 .....
+      checkOut() {
+        if (this.totalCount === 0) {
+          this.$message({
+            message: 'plz order sth before commit',
+            type: 'warning'
+          })
+        } else {
+        // 应该会封装一个 axios.post().then().catch()
+          this.tableData = []
+          this.totalCount = 0
+          this.totalMoney = 0
+          // element-ui 的方法
+          this.$message({
+            message: '订单提交成功 OvO',
+            type: 'success'
+          })
+        }
       }
     }
   }
