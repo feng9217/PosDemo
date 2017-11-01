@@ -14,10 +14,16 @@
                 <!-- 2.5版本以后 scope已经改成slot-scope -->
                 <template slot-scope="scope">
                   <el-button type="text" size="small">删除</el-button>
-                  <el-button type="text" size="small">增加</el-button>
+                  <!-- 小坑 因为有scope 模板作用域 传入参数注意 -->
+                  <!-- scope.row 传入当前行 -->
+                  <el-button type="text" size="small" @click="addOrderList(scope.row)">增加</el-button>
                 </template>
               </el-table-column>
             </el-table>
+            <div class="total">
+              <small>数量:</small>{{totalCount}}
+              <small>金额:</small>{{totalMoney}}元
+            </div>
             <div class="btn-zone">
               <el-button type="warning">挂单</el-button>
               <el-button type="danger">删除</el-button>
@@ -37,7 +43,7 @@
           <div class="title">热门商品</div>
           <div class="popular-goods-list">
             <ul>
-              <li v-for="item in popularGoods">
+              <li v-for="item in popularGoods" @click="addOrderList(item)">
                 <span>{{item.goodsName}}</span>
                 <span class="per-price">{{item.price}}</span>
               </li>
@@ -49,12 +55,12 @@
             <el-tab-pane label="汉堡">
               <div>
                 <ul class="cook-list">
-                  <li v-for="item in type0Goods">
+                  <li v-for="item in type0Goods" @click="addOrderList(item)">
                     <span class="foodImg">
                       <img :src="item.goodsImg" width="100%">
                     </span>
                     <span class="foodName">{{item.goodsName}}</span>
-                    <span class="foodPrice">{{item.price}}</span>
+                    <span class="foodPrice">￥{{item.price}}元</span>
                   </li>
                 </ul>
               </div>
@@ -62,12 +68,12 @@
             <el-tab-pane label="小食">
               <div>
                 <ul class="cook-list">
-                  <li v-for="item in type1Goods">
+                  <li v-for="item in type1Goods" @click="addOrderList(item)">
                     <span class="foodImg">
                       <img :src="item.goodsImg" width="100%">
                     </span>
                     <span class="foodName">{{item.goodsName}}</span>
-                    <span class="foodPrice">{{item.price}}</span>
+                    <span class="foodPrice">￥{{item.price}}元</span>
                   </li>
                 </ul>
               </div>
@@ -75,12 +81,12 @@
             <el-tab-pane label="饮品">
               <div>
                 <ul class="cook-list">
-                  <li v-for="item in type2Goods">
+                  <li v-for="item in type2Goods" @click="addOrderList(item)">
                     <span class="foodImg">
                       <img :src="item.goodsImg" width="100%">
                     </span>
                     <span class="foodName">{{item.goodsName}}</span>
-                    <span class="foodPrice">{{item.price}}</span>
+                    <span class="foodPrice">￥{{item.price}}元</span>
                   </li>
                 </ul>
               </div>
@@ -88,12 +94,12 @@
             <el-tab-pane label="套餐">
               <div>
                 <ul class="cook-list">
-                  <li v-for="item in type3Goods">
+                  <li v-for="item in type3Goods" @click="addOrderList(item)">
                     <span class="foodImg">
                       <img :src="item.goodsImg" width="100%">
                     </span>
                     <span class="foodName">{{item.goodsName}}</span>
-                    <span class="foodPrice">{{item.price}}</span>
+                    <span class="foodPrice">￥{{item.price}}元</span>
                   </li>
                 </ul>
               </div>
@@ -114,28 +120,14 @@
     name: 'Pos',
     data() {
       return {
-        tableData: [{
-          goodsName: '可口可乐',
-          price: 8,
-          count: 1
-        }, {
-          goodsName: '香辣鸡腿堡',
-          price: 15,
-          count: 1
-        }, {
-          goodsName: '爱心薯条',
-          price: 8,
-          count: 1
-        }, {
-          goodsName: '甜筒',
-          price: 8,
-          count: 1
-        }],
+        tableData: [],
         popularGoods: [],
         type0Goods: [],
         type1Goods: [],
         type2Goods: [],
-        type3Goods: []
+        type3Goods: [],
+        totalCount: 0,
+        totalMoney: 0
       }
     },
     created() {
@@ -171,15 +163,70 @@
             // this.type1Goods = res.data[1]
             // this.type2Goods = res.data[2]
             // this.type3Goods = res.data[3]
+            // 来个骚骚的 ES6解构赋值
             [this.type0Goods, this.type1Goods, this.type2Goods, this.type3Goods] = res.data
-            console.log(this.type3Goods[0].goodsName)
-            // for (let i = 0; i <= this.type3Goods.length; i++) {
-            //   if (this.type3Goods[i].goodsName.length > 5) {}
+            // console.log(res.data.length)
+            // console.log(this.type3Goods[0].goodsName)
+            // ==== 全部 typeGoods 一起上版本
+            // 用了模板字符串 console.log 试了是有用的
+            // 只是 eslint 有 eval() 的禁令 用不了
+            // for (let i = 0; i < res.data.length; i++) {
+            //   let arr = eval('this.type{i}Goods')
+            //   console.log(arr)
+            //   for (let j = 0; j < arr.length; j++) {
+            //     if (arr[j].goodsName.length > 5) {
+            //       arr[j].goodsName = arr[j].goodsName.substring(0, 5) + '..'
+            //     }
+            //   }
             // }
-            this.type3Goods[0].goodsName = this.type3Goods[0].goodsName.substring(0, 5) + '..'
+            // ==== 单个 typeGoods 版本 ====
+            // for (let i = 0; i < this.type3Goods.length; i++) {
+            //   // console.log(this)
+            //   if (this.type3Goods[i].goodsName.length > 5) {
+            //     this.type3Goods[i].goodsName = this.type3Goods[i].goodsName.substring(0, 5) + '..'
+            //   }
+            // }
+            // 上面这段 报错:
+            // Cannot read property 'goodsName' of undefined at eval
+            // 搞好了 报错原因 i<=this.arr.length 多遍历了一次 有个就没值了
+            // this.type3Goods[0].goodsName = this.type3Goods[0].goodsName.substring(0, 5) + '..'
+            // 不行就选择改字体吧
           } else {
             return console.log('获取数据错误')
           }
+        })
+      },
+      addOrderList(item) {
+        // 每次添加都需要清零的
+        this.totalCount = 0
+        this.totalMoney = 0
+
+        // 判断商品是否已在订单列表中
+        console.log(this.tableData)
+        let isHave = false
+        for (let i = 0; i < this.tableData.length; i++) {
+          if (this.tableData[i].goodsId === item.goodsId) {
+            isHave = true
+          }
+        }
+        // 根据标志位执行逻辑 存在 则数量++ 不存在 则添加
+        if (isHave) {
+          // 如果在 tableData 中已经存在该元素 则数量++
+          let arr = this.tableData.filter((el) => el.goodsId === item.goodsId)
+          arr[0].count++
+        } else {
+          let newGoods = {
+            goodsId: item.goodsId,
+            goodsName: item.goodsName,
+            price: item.price,
+            count: 1
+          }
+          this.tableData.push(newGoods)
+        }
+        // 汇总计算
+        this.tableData.forEach((el) => {
+          this.totalCount += el.count
+          this.totalMoney = this.totalMoney + (el.price * el.count)
         })
       }
     }
@@ -258,7 +305,7 @@
     width: 40%;
   }
   .foodName{
-    font-size: 18px;
+    font-size: 16px;
     padding-left: 10px;
     color:brown;
   }
@@ -266,5 +313,11 @@
     font-size: 16px;
     padding-left: 10px;
     padding-top:10px;
+  }
+  .total{
+    background-color: #fff;
+    padding: 10px;
+    border-bottom: 1px solid #D3DCE6;
+    text-align: center;
   }
 </style>
