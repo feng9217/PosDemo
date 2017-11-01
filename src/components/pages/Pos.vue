@@ -47,6 +47,9 @@
                 </li>
               </ul>
             </div>
+            <div class="btn-zone">
+              <el-button type="danger" @click="clearOrderList">删除</el-button>
+            </div>
           </el-tab-pane>
           <!-- 外卖的 tabs页 -->
           <el-tab-pane label="外卖">
@@ -307,6 +310,10 @@
             type: 'success'
           })
         }
+      },
+      clearOrderList() {
+        this.postData = []
+        this.orderIndex = 1
       }
     }
   }
