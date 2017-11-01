@@ -4,6 +4,7 @@
       <!-- span占栏数 -->
       <el-col :span="7" class="pos-order" ref="orderList" id="order-list">
         <el-tabs>
+          <!-- 点餐的 tabs页 -->
           <el-tab-pane label="点餐">
             <el-table border style="width=100%" :data="tableData">
               <el-table-column prop="goodsName" label="商品名称"></el-table-column>
@@ -25,14 +26,29 @@
               <small>金额:</small>{{totalMoney}}元
             </div>
             <div class="btn-zone">
-              <el-button type="warning">挂单</el-button>
+              <el-button type="warning" @click="postOrder">挂单</el-button>
               <el-button type="danger" @click="deleteAllGoods">删除</el-button>
               <el-button type="success" @click="checkOut">结账</el-button>
             </div>
           </el-tab-pane>
+          <!-- 挂单的 tabs 页 -->
           <el-tab-pane label="挂单">
-            挂单
+            <div>
+              <ul>
+                <li v-for="item in postData">
+                  <el-table border style="width=100%" :data="item">
+                    <el-table-column prop="goodsName" label="商品名称"></el-table-column>
+                    <el-table-column prop="count" label="数量" width="80" fixed="right"></el-table-column>
+                  </el-table>
+                  <div class="total">
+                    <small>数量:</small>{{item.count}}
+                    <small>单号:</small>{{item.index}}
+                  </div>
+                </li>
+              </ul>
+            </div>
           </el-tab-pane>
+          <!-- 外卖的 tabs页 -->
           <el-tab-pane label="外卖">
             外卖
           </el-tab-pane>
@@ -127,7 +143,9 @@
         type2Goods: [],
         type3Goods: [],
         totalCount: 0,
-        totalMoney: 0
+        totalMoney: 0,
+        postData: [],
+        orderIndex: 1
       }
     },
     created() {
@@ -202,7 +220,7 @@
         this.totalMoney = 0
 
         // 判断商品是否已在订单列表中
-        console.log(this.tableData)
+        // console.log(this.tableData)
         let isHave = false
         for (let i = 0; i < this.tableData.length; i++) {
           if (this.tableData[i].goodsId === item.goodsId) {
@@ -263,6 +281,29 @@
           // element-ui 的方法
           this.$message({
             message: '订单提交成功 OvO',
+            type: 'success'
+          })
+        }
+      },
+      postOrder() {
+        if (this.totalCount === 0) {
+          this.$message({
+            message: 'plz order sth before postOrder',
+            type: 'warning'
+          })
+        } else {
+        // 应该会封装一个 axios.post().then().catch()
+          this.tableData.count = this.totalCount
+          this.tableData.index = this.orderIndex
+          this.postData.push(this.tableData)
+          this.orderIndex++
+          console.log(this.postData)
+          this.tableData = []
+          this.totalCount = 0
+          this.totalMoney = 0
+          // element-ui 的方法
+          this.$message({
+            message: '挂单成功 OvO',
             type: 'success'
           })
         }
