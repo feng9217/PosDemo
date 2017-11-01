@@ -13,15 +13,16 @@ element和bootstrap一样 也有栅格系统
 在使用tabs的时候, 发现第一个tab会被吃掉一个padding-left 迷??
 .el-tabs__nav-scroll 只能给这个盒子上个补丁
   
-Element-ui tabs嵌套table的使用
-  `<el-row>`
-    `<el-col :span="7" class="pos-order" ref="orderList" id="order-list">`
-      `<el-tabs>`
-        `<el-tab-pane label="点餐">`
-          `<el-table border style="width=100%" :data="tableData">`
-            `<el-table-column prop="goodsName" label="商品名称">`
+Element-ui tabs嵌套table的使用  
+  `<el-row>`  
+    `<el-col :span="7" class="pos-order" ref="orderList" id="order-list">`  
+      `<el-tabs>`  
+        `<el-tab-pane label="点餐">`  
+          `<el-table border style="width=100%" :data="tableData">`  
+            `<el-table-column prop="goodsName" label="商品名称">`  
   
 ##添加了挂单页面
+***
 使用了添加对象属性的方式  
   `this.tableData.count = this.totalCount`
   `this.tableData.index = this.orderIndex`
