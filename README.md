@@ -21,7 +21,7 @@ Element-ui tabs嵌套table的使用
           `<el-table border style="width=100%" :data="tableData">`  
             `<el-table-column prop="goodsName" label="商品名称">`  
   
-##添加了挂单页面
+##_添加了挂单页面_
 ***
 使用了添加对象属性的方式  
   `this.tableData.count = this.totalCount`
